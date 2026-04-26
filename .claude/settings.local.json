@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install *)",
+      "Bash(python -c \"import sys; print\\(sys.executable\\)\")",
+      "Bash(python -c \"import torch; print\\(torch.__version__\\)\")",
+      "Bash(conda install *)",
+      "Bash(conda config *)"
+    ]
+  }
+}
