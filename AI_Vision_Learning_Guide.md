@@ -106,7 +106,7 @@ Python 是计算机视觉的标准语言，你需要重点掌握以下库：
 - **Pandas**：数据处理和分析的强大工具
 - **Matplotlib**：数据可视化的必备库
 
-> 💡 **推荐学习资源**：廖雪峰 Python 教程、NumPy 官方文档
+> 💡 **推荐学习资源**：[Stage 1 - Python 基础](Stage1_Python_Fundamentals/README.md)、廖雪峰 Python 教程、NumPy 官方文档
 
 ### 🧮 数学基础
 
