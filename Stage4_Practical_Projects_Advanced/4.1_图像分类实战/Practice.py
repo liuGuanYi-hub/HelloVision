@@ -263,7 +263,7 @@ class ImageClassificationTrainer:
         
         # 优化器
         optimizer = optim.SGD(
-            filter(p => p.requires_grad, self.model.parameters()),
+            filter(lambda p: p.requires_grad, self.model.parameters()),
             lr=self.config['learning_rate'],
             momentum=0.9,
             weight_decay=1e-4
@@ -274,8 +274,7 @@ class ImageClassificationTrainer:
             optimizer,
             mode='min',
             factor=0.1,
-            patience=3,
-            verbose=True
+            patience=3
         )
         
         # 训练历史
@@ -363,13 +362,13 @@ class ImageClassificationTrainer:
                     self.model.state_dict(), 
                     'models/best_model.pth'
                 )
-                print(f"✨ 保存最佳模型！验证准确率：{val_acc:.2f}%")
+                print(f" 保存最佳模型！验证准确率：{val_acc:.2f}%")
             
             # 更新学习率
             scheduler.step(val_loss)
         
         training_time = time.time() - start_time
-        print(f"\n🎉 训练完成！总耗时：{training_time/60:.2f} 分钟")
+        print(f"\n 训练完成！总耗时：{training_time/60:.2f} 分钟")
         print(f"最佳验证准确率：{best_val_acc:.2f}%")
         
         return self.history
@@ -494,7 +493,7 @@ def main():
     
     # 配置
     config = {
-        'data_dir': 'data',  # 数据集目录
+        'data_dir': 'D:/zzd_project/cursor/HelloWorld_Vision/Stage4_Practical_Projects_Advanced/4.1_图像分类实战/data',  # 数据集目录
         'model_name': 'resnet50',  # 模型选择：resnet18, resnet50, efficientnet_b0, efficientnet_b3
         'num_classes': 2,  # 分类数量（猫狗=2，花卉=5 等）
         'batch_size': 32,
@@ -516,17 +515,21 @@ def main():
     # 设置迁移学习策略
     trainer.set_transfer_learning('fine_tune')
     
-    # 训练模型
-    trainer.train()
+    # 训练模型（检查是否已有模型，有则跳过）
+    import os, torch
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(script_dir, 'best_model.pth')
+    if os.path.exists(model_path):
+        print("发现已训练模型，跳过训练，加载模型...")
+        trainer.model.load_state_dict(torch.load(model_path, weights_only=True))
+        trainer.model.to(trainer.device)
+    else:
+        trainer.train()
+        torch.save(trainer.model.state_dict(), model_path)
+        print(f"模型已保存至: {model_path}")
     
     # 评估模型
     trainer.evaluate()
-    
-    # 可视化预测结果
-    trainer.visualize_predictions(num_images=10)
-    
-    # 绘制训练历史
-    trainer.plot_training_history()
     
     print("\n" + "="*50)
     print("所有任务完成！")
